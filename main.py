@@ -7,14 +7,6 @@ problemas_possiveis = ["Guerras entre Civilizações", "Desastres Naturais", "Ep
 avanco_de_civilizacao = ["Primitiva", "Industrial", "Interplanetária", "Intergaláctica"]
 tipo_de_civilizacao = ["Agressiva", "Passivo-agressiva", "Pacífica"]
 tipos_de_planetas = ["Terrestre", "Desértico", "Gasoso", "Oceânico", "Congelado", "Artificial", "Anômalo"]
-caracteristicas_fisicas_astronomicas = {
-    "distancia_entre_planetas": random.uniform(0.1, 50),  # em unidades astronômicas
-    "excentricidade_orbitas_planetas": random.uniform(0, 1),
-    "inclinação_axial_planetas": random.uniform(0, 90),  # em graus
-    "rotação_sincronizada": random.choice([True, False]),
-    "periodo_eclipses": random.uniform(0, 365),  # em dias
-    "presenca_estacoes_ano": random.choice(["Sim", "Não"])
-}
 
 def gerar_sistema_planetario():
     sistema_planetario = {
@@ -23,51 +15,51 @@ def gerar_sistema_planetario():
             "massa": random.uniform(0.1, 10),  # em massas solares
             "tamanho": random.uniform(0.1, 100),  # em raios solares
             "temperatura_superficial": random.uniform(2000, 40000),  # em Kelvin
-            "luminosidade": random.uniform(0.1, 100),  # em relação ao Sol
+            "luminosidade": random.uniform(0.1, 100),  # em vezes a luminosidade do Sol
             "estagio_vida": random.choice(["Main Sequence", "Red Giant", "White Dwarf"]),
             "idade": random.uniform(0, 15),  # em bilhões de anos
         },
         "planetas": [],
-        "asteroides_cometas": [],
-        "caracteristicas_fisicas_astronomicas": caracteristicas_fisicas_astronomicas,
         "elementos_exoticos": []
     }
 
     quantidade_planetas = random.randint(1, 10)
     for i in range(quantidade_planetas):
+        habitavel = random.choice([True, False])
         planeta = {
             "nome": f"Planeta {i+1}",
+            "tipo": random.choice(tipos_de_planetas),
             "diametro": random.uniform(2000, 200000),  # em quilômetros
             "massa": random.uniform(0.01, 100),  # em massas terrestres
-            "composicao_atmosferica": random.choice(["Nitrogênio", "Oxigênio", "Dióxido de Carbono", "Outros"]),
+            "composicao_atmosferica": random.choice(["Nitrogênio", "Oxigênio", "Dióxido de Carbono", "Amônia"]),
             "composicao_geologica": random.choice(["Rocha", "Gelo", "Metal"]),
-            "distancia_orbital": random.uniform(0.1, 50),  # em unidades astronômicas
             "periodo_rotacao": random.uniform(1, 100),  # em horas
             "periodo_translacao": random.uniform(50, 500),  # em dias
-            "inclinação_orbital": random.uniform(0, 90),  # em graus
             "numero_luas": random.randint(0, 10),
             "presenca_aneis": random.choice([True, False]),
-            "satelites_naturais": []  # Adicionando lista vazia para satélites
+            "habitavel": habitavel,
+            "satelites_naturais": []
         }
-        # Geração dos satélites naturais para cada planeta
+
         for j in range(planeta["numero_luas"]):
             satelite = {
-                "nome": f"Lua {j+1} de {planeta['nome']}",
+                "nome": f"Lua {j+1} de Planeta {i+1}",
                 "diametro": random.uniform(10, 5000),  # em quilômetros
                 "massa": random.uniform(0.0001, 0.1),  # em massas terrestres
-                "distancia_orbital": random.uniform(1000, 100000),  # em quilômetros
-                "caracteristicas_geologicas": random.choice(["Montanhas", "Vales", "Crateras"]),
-                "composicao_atmosferica": random.choice(["Nenhuma", "Gás Volátil", "Traços de Nitrogênio"]),
             }
-            planeta["satelites_naturais"].append(satelite)  # Adicionando o satélite ao planeta
+            planeta["satelites_naturais"].append(satelite)
+
+        if habitavel:
+            planeta["civilizacao"] = {
+                "problemas_possiveis": random.choice(problemas_possiveis),
+                "avanco_de_civilizacao": random.choice(avanco_de_civilizacao),
+                "tipo_de_civilizacao": random.choice(tipo_de_civilizacao),
+            }
 
         sistema_planetario["planetas"].append(planeta)
 
-    # Geração de asteroides e cometas, elementos exóticos, etc., permanece igual
-
     return sistema_planetario
 
-# Ajuste na função de impressão para incluir satélites naturais de cada planeta
 def imprimir_sistema_planetario(sistema):
     print("Sistema Planetário:")
     print("-------------------\n")
@@ -75,32 +67,59 @@ def imprimir_sistema_planetario(sistema):
     # Estrela Central
     print("Estrela Central:")
     for chave, valor in sistema["estrela_central"].items():
-        print(f"  {chave}: {valor}")
+        valor_formatado = f"{valor:.2f}" if isinstance(valor, float) else valor
+        if chave == "massa":
+            valor_formatado += " massas solares"
+        elif chave == "tamanho":
+            valor_formatado += " raios solares"
+        elif chave == "temperatura_superficial":
+            valor_formatado += " K"
+        elif chave == "idade":
+            valor_formatado += " bilhões de anos"
+        elif chave == "luminosidade":
+            valor_formatado += " vezes a luminosidade do Sol"
+        print(f"  {chave.replace('_', ' ').capitalize()}: {valor_formatado}")
     print("\n-------------------\n")
     
-    # Planetas
+    # Planetas e Satélites Naturais
     for i, planeta in enumerate(sistema["planetas"], start=1):
-        print(f"Planeta {i}:")
+        print(f"Planeta {i}: {planeta['nome']} ({planeta['tipo']})")
         for chave, valor in planeta.items():
-            if chave != "satelites_naturais":  # Não imprime satélites aqui
-                print(f"  {chave}: {valor}")
+            if chave in ["civilizacao", "nome", "tipo", "satelites_naturais"]: continue
+            valor_formatado = f"{valor:.2f}" if isinstance(valor, float) else valor
+            if chave == "diametro":
+                valor_formatado += " km"
+            elif chave == "massa":
+                valor_formatado += " massas terrestres"
+            elif chave == "periodo_rotacao":
+                valor_formatado += " horas"
+            elif chave == "periodo_translacao":
+                valor_formatado += " dias"
+            print(f"  {chave.replace('_', ' ').capitalize()}: {valor_formatado}")
         
         # Satélites Naturais
         if planeta["satelites_naturais"]:
-            print("  Satélites Naturais:")
+            print("\n  Satélites Naturais:")
             for lua in planeta["satelites_naturais"]:
                 print(f"    - {lua['nome']}:")
-                print(f"      Diametro: {lua['diametro']} km")
-                print(f"      Massa: {lua['massa']} massas terrestres")
-                print(f"      Distância Orbital: {lua['distancia_orbital']} km")
+                for lua_chave, lua_valor in lua.items():
+                    if lua_chave in ["diametro"]:
+                        lua_valor_formatado = f"{lua_valor:.2f} km"
+                    elif lua_chave in ["massa"]:
+                        lua_valor_formatado = f"{lua_valor:.2f} massas terrestres"
+                    elif lua_chave in ["distancia_orbital"]:
+                        lua_valor_formatado = f"{lua_valor:.2f} km"
+                    else:
+                        lua_valor_formatado = lua_valor
+                    print(f"      {lua_chave.replace('_', ' ').capitalize()}: {lua_valor_formatado}")
                 print("      ---")
-        print("\n-------------------\n")
-
-# Gerar e imprimir um sistema planetário
-sistema_planetario = gerar_sistema_planetario()
-imprimir_sistema_planetario(sistema_planetario)
-
-    # Impressão de asteroides, cometas, características físicas astronômicas, e elementos exóticos segue
+        print("\n-------------------")
+                
+        if "civilizacao" in planeta:
+            print("\n  Civilização:")
+            for chave, valor in planeta["civilizacao"].items():
+                print(f"    {chave.replace('_', ' ').capitalize()}: {valor}")
+        print("\n-------------------")
 
 # Gerar e imprimir um sistema planetário
 sistema_planetario = gerar_sistema_planetario()
