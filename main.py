@@ -3,7 +3,7 @@ import random
 # Definição das opções para cada categoria
 tipos_de_estrela = ["Anã Vermelha", "Gigante Azul", "Estrela de Sequência Principal", "Estrela Binária"]
 problemas_possiveis = ["Guerras entre Civilizações", "Desastres Naturais", "Epidemias e Doenças",
-                       "Conflitos Políticos e Sociais", "Invasões Alienígenas", "Colapso Ecológico", "Pirataria Alienígena"]
+                       "Conflitos Políticos e Sociais", "Invasões Alienígenas", "Colapso Ecológico", "Pirataria Alienígena", "racismo"]
 avanco_de_civilizacao = ["Primitiva", "Industrial", "Interplanetária", "Intergaláctica"]
 tipo_de_civilizacao = ["Agressiva", "Passivo-agressiva", "Pacífica"]
 tipos_de_planetas = ["Terrestre", "Desértico", "Gasoso", "Oceânico", "Congelado", "Artificial", "Anômalo"]
